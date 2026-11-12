@@ -1,0 +1,16 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# One web service: builds the client, builds data/content.db from content/raw*, runs the game server.
+services:
+  - type: web
+    name: cosmic-party
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm ci --include=dev && npm run build && npm run content:build
+    startCommand: npm start
+    healthCheckPath: /api/meta
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=400

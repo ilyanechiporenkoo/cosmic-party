@@ -1,0 +1,1 @@
+{"id":"music-opera","fetchedAt":"2026-11-12T11:12:08.034Z","source":"Wikidata (query.wikidata.org), CC0","query":"SELECT DISTINCT ?item ?sl WHERE {\n  VALUES ?cls { wd:Q1344 wd:Q2742 } ?item wdt:P31 ?cls .\n  ?item wikibase:sitelinks ?sl . FILTER(?sl >= 12)\n} ORDER BY DESC(?sl) LIMIT 4800","items":[]}

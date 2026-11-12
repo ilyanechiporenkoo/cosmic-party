@@ -1,0 +1,1 @@
+{"id":"tv-animated","fetchedAt":"2026-11-12T11:09:59.216Z","source":"Wikidata (query.wikidata.org), CC0","query":"SELECT DISTINCT ?item ?sl WHERE {\n  ?item wdt:P31 wd:Q581714 .\n  ?item wikibase:sitelinks ?sl . FILTER(?sl >= 10)\n} ORDER BY DESC(?sl) LIMIT 4800","items":[]}
