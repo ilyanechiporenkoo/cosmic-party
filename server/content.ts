@@ -166,8 +166,12 @@ export class ContentStore {
     if (this.cache.size > 48) this.cache.delete(this.cache.keys().next().value!);
     return idx;
   }
-  pickQuestion(categories: CategoryId[], exclude: Set<string>, minAnswers = 30): QuestionMeta {
-    let pool = this.questions.filter((q) => q.answerCount >= minAnswers && (categories.length === 0 || categories.includes(q.category)));
+  pickQuestion(categories: CategoryId[], exclude: Set<string>, minAnswers = 30, maxDifficulty = 3): QuestionMeta {
+    const inCats = (q: QuestionMeta) => q.answerCount >= minAnswers && (categories.length === 0 || categories.includes(q.category));
+    // easiest pool that has something: chosen difficulty first, relaxed only if the chosen categories have nothing that easy
+    let pool: QuestionMeta[] = [];
+    for (let d = maxDifficulty; d <= 3 && !pool.length; d++) pool = this.questions.filter((q) => q.difficulty <= d && inCats(q));
+    if (!pool.length) pool = this.questions.filter((q) => q.difficulty <= maxDifficulty);
     if (!pool.length) pool = this.questions;
     const fresh = pool.filter((q) => !exclude.has(q.id));
     const from = fresh.length ? fresh : pool;

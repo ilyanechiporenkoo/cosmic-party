@@ -32,6 +32,7 @@ export interface RoomSettings {
   visibility: Visibility;
   earlyEnd: boolean;
   lives: number; // potato mode
+  difficulty: 1 | 2 | 3; // max question difficulty: 1 = easy only
 }
 
 export interface PublicPlayer {

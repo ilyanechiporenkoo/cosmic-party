@@ -7,6 +7,7 @@ export function normalize(s: string): string {
     .toLowerCase()
     .replace(/ё/g, "е")
     .replace(/[’'`ʼ‘]/g, "") // apostrophes (п'ять → пять)
+    .replace(/(^|[^\p{L}])с(?=\+\+|#)/gu, "$1c") // Cyrillic с++ / с# typed on a Russian layout → Latin c
     .replace(/[+]{2}/g, "pp") // c++ → cpp
     .replace(/#/g, "sharp") // c# → csharp
     // strip Latin diacritics (é→e) but protect Cyrillic й / ї which decompose under NFD

@@ -24,6 +24,7 @@ describe("normalization", () => {
 
 describe("matcher — prompt examples", () => {
   it("lua scripts → Lua", () => expect(id(prog, "lua scripts")).toBe("Q207316"));
+  it("с++ typed on a Russian layout → C++", () => expect(id(prog, "с++")).toBe("Q2407"));
   it("python programming → Python", () => expect(id(prog, "python programming")).toBe("Q28865"));
   it("javascript language → JavaScript", () => expect(id(prog, "javascript language")).toBe("Q2005"));
   it("JavaScript never becomes Java", () => { expect(id(prog, "JavaScript")).toBe("Q2005"); expect(id(prog, "javascrip")).toBe("Q2005"); });
@@ -59,5 +60,17 @@ describe.skipIf(!store)("matcher — real Wikidata content", () => {
     const a = matchAnswer(idx, "Залізо"), b = matchAnswer(idx, "Железо");
     expect(a.status).toBe("match"); expect(b.status).toBe("match");
     expect(idx.answers[a.ids[0]].id).toBe(idx.answers[b.ids[0]].id);
+  });
+});
+
+describe("question difficulty", () => {
+  it("easy setting draws only easy questions", () => {
+    const store = new ContentStore();
+    for (let i = 0; i < 200; i++) expect(store.pickQuestion([], new Set(), 30, 1).difficulty).toBe(1);
+  });
+  it("falls back to harder questions only when the chosen categories have no easy ones", () => {
+    const store = new ContentStore();
+    const hardOnly = (Object.keys(store.categoriesAvailable()) as any[]).find((c) => !store.questions.some((q) => q.category === c && q.difficulty === 1 && q.answerCount >= 30));
+    if (hardOnly) expect(store.pickQuestion([hardOnly], new Set(), 30, 1).category).toBe(hardOnly);
   });
 });

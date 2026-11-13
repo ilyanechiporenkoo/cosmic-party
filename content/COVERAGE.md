@@ -1,12 +1,12 @@
 # Content coverage (measured)
 
-Generated: 2026-11-12T15:50:19.359Z
+Generated: 2026-11-13T22:22:20.698Z
 
-- Broad question definitions: **163**, templates: **46**
-- Questions included: **1663** (broad: 140 with ≥30 answers; templated: 1523 with ≥40 answers)
-- Question→answer relations: **395,843**
-- Questions with ≥1000 answers: **34**
-- Target: 10,000 questions × 1000 answers. Current coverage: 16.63% of question target, 3.958% of relation target.
+- Broad question definitions: **172**, templates: **46**
+- Questions included: **1676** (broad: 153 with ≥30 answers; templated: 1523 with ≥40 answers)
+- Question→answer relations: **402,576**
+- Questions with ≥1000 answers: **36**
+- Target: 10,000 questions × 1000 answers. Current coverage: 16.76% of question target, 4.026% of relation target.
 
 Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothing is hand-invented.
 
@@ -16,24 +16,24 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 |---|---:|---:|
 | animals | 11 | 24208 |
 | astronomy | 7 | 5043 |
-| countries | 71 | 25288 |
-| food | 7 | 914 |
-| games | 81 | 28712 |
-| general | 149 | 27877 |
+| countries | 71 | 25282 |
+| food | 13 | 3440 |
+| games | 81 | 28809 |
+| general | 152 | 28307 |
 | geography | 89 | 18340 |
 | history | 16 | 6255 |
-| internet | 4 | 1169 |
+| internet | 4 | 1412 |
 | literature | 187 | 34536 |
 | memes | 1 | 145 |
-| movies | 344 | 70358 |
-| music | 256 | 42444 |
-| nature | 6 | 7064 |
+| movies | 346 | 71815 |
+| music | 256 | 42996 |
+| nature | 7 | 7593 |
 | programming | 4 | 1074 |
 | science | 47 | 10826 |
 | space | 5 | 1065 |
-| sports | 343 | 81700 |
-| technology | 26 | 3566 |
-| transport | 9 | 5259 |
+| sports | 343 | 81595 |
+| technology | 27 | 4455 |
+| transport | 9 | 5380 |
 
 ## By question
 
@@ -66,7 +66,7 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | geo-glacier | nature | 102 | 0 | 1 | 101 | yes |
 | country-any | countries | 212 | 0 | 0 | 212 | yes |
 | country-historical | history | 1426 | 2 | 45 | 1379 | yes |
-| city-big | countries | 3000 | 0 | 52 | 2948 | yes |
+| city-big | countries | 3000 | 0 | 58 | 2942 | yes |
 | city-capital | countries | 207 | 0 | 0 | 207 | yes |
 | city-ukraine | countries | 78 | 0 | 0 | 78 | yes |
 | city-usa | countries | 3000 | 0 | 543 | 2457 | yes |
@@ -100,27 +100,27 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | prog-language | programming | 407 | 0 | 3 | 404 | yes |
 | tech-os | technology | 462 | 0 | 0 | 462 | yes |
 | tech-software | technology | 264 | 0 | 0 | 264 | yes |
-| tech-website | internet | 522 | 2 | 0 | 520 | yes |
+| tech-website | internet | 691 | 1 | 2 | 688 | yes |
 | tech-browser | technology | 95 | 0 | 0 | 95 | yes |
 | tech-dbms | programming | 65 | 0 | 1 | 64 | yes |
 | tech-framework | programming | 320 | 0 | 0 | 320 | yes |
 | tech-company | technology | 40 | 0 | 0 | 40 | yes |
 | tech-file-format | programming | 286 | 0 | 0 | 286 | yes |
-| game-video | games | 2813 | 1 | 32 | 2780 | yes |
+| game-video | games | 2913 | 2 | 34 | 2877 | yes |
 | game-console | games | 2 | 0 | 0 | 2 | no (too few) |
 | game-character | games | 295 | 0 | 1 | 294 | yes |
 | game-series | games | 234 | 0 | 0 | 234 | yes |
 | game-developer | games | 515 | 0 | 1 | 514 | yes |
 | game-board | games | 100 | 0 | 1 | 99 | yes |
-| film-any | movies | 2755 | 0 | 81 | 2674 | yes |
+| film-any | movies | 3000 | 0 | 100 | 2900 | yes |
 | film-animated | movies | 16 | 0 | 0 | 16 | no (too few) |
-| tv-series | movies | 971 | 0 | 12 | 959 | yes |
+| tv-series | movies | 1341 | 0 | 24 | 1317 | yes |
 | tv-animated | movies | 0 | 0 | 0 | 0 | no (too few) |
 | tv-anime | movies | 249 | 0 | 1 | 248 | yes |
 | film-actor | movies | 1274 | 0 | 0 | 1274 | yes |
 | film-director | movies | 1036 | 0 | 0 | 1036 | yes |
 | film-character | movies | 1275 | 0 | 5 | 1270 | yes |
-| music-instrument | music | 99 | 0 | 0 | 99 | yes |
+| music-instrument | music | 676 | 1 | 24 | 651 | yes |
 | music-genre | music | 815 | 2 | 6 | 807 | yes |
 | music-band | music | 809 | 0 | 0 | 809 | yes |
 | music-singer | music | 988 | 0 | 0 | 988 | yes |
@@ -129,20 +129,19 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | music-album | music | 405 | 0 | 0 | 405 | yes |
 | music-song | music | 89 | 0 | 0 | 89 | yes |
 | music-opera | music | 0 | 0 | 0 | 0 | no (too few) |
-| food-dish | food | 393 | 1 | 1 | 391 | yes |
-| food-cheese | food | 115 | 0 | 0 | 115 | yes |
-| food-cocktail | food | 97 | 0 | 0 | 97 | yes |
-| food-dessert | food | 34 | 0 | 0 | 34 | yes |
-| food-spice | food | 14 | 0 | 0 | 14 | no (too few) |
-| food-bread | food | 11 | 0 | 0 | 11 | no (too few) |
+| food-dish | food | 1605 | 2 | 30 | 1573 | yes |
+| food-cheese | food | 346 | 0 | 4 | 342 | yes |
+| food-cocktail | food | 127 | 0 | 0 | 127 | yes |
+| food-dessert | food | 245 | 0 | 4 | 241 | yes |
+| food-spice | food | 72 | 0 | 0 | 72 | yes |
+| food-bread | food | 197 | 1 | 7 | 189 | yes |
 | food-fruit | food | 14 | 0 | 0 | 14 | no (too few) |
-| food-vegetable | food | 6 | 0 | 0 | 6 | no (too few) |
 | food-soup | food | 14 | 0 | 0 | 14 | no (too few) |
 | food-sauce | food | 26 | 0 | 0 | 26 | no (too few) |
-| food-drink | food | 174 | 0 | 1 | 173 | yes |
-| food-sausage | food | 10 | 0 | 0 | 10 | no (too few) |
-| food-pasta | food | 4 | 0 | 0 | 4 | no (too few) |
-| sport-any | sports | 575 | 0 | 4 | 571 | yes |
+| food-drink | food | 516 | 0 | 7 | 509 | yes |
+| food-sausage | food | 69 | 0 | 1 | 68 | yes |
+| food-pasta | food | 69 | 0 | 0 | 69 | yes |
+| sport-any | sports | 472 | 0 | 6 | 466 | yes |
 | sport-club | sports | 1565 | 0 | 99 | 1466 | yes |
 | sport-footballer | sports | 2158 | 0 | 3 | 2155 | yes |
 | sport-tennis | sports | 684 | 0 | 0 | 684 | yes |
@@ -166,14 +165,14 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | space-telescope | space | 88 | 1 | 0 | 87 | yes |
 | space-mission | space | 320 | 0 | 1 | 319 | yes |
 | space-station | space | 54 | 0 | 0 | 54 | yes |
-| car-brand | transport | 318 | 0 | 1 | 317 | yes |
+| car-brand | transport | 439 | 0 | 1 | 438 | yes |
 | car-model | transport | 2016 | 0 | 47 | 1969 | yes |
 | transport-airline | transport | 708 | 0 | 4 | 704 | yes |
 | transport-aircraft | transport | 430 | 1 | 0 | 429 | yes |
 | transport-ship | transport | 814 | 1 | 61 | 752 | yes |
 | transport-metro | transport | 321 | 0 | 2 | 319 | yes |
 | net-meme | memes | 148 | 3 | 0 | 145 | yes |
-| net-social | internet | 129 | 0 | 0 | 129 | yes |
+| net-social | internet | 204 | 0 | 0 | 204 | yes |
 | net-youtuber | internet | 410 | 0 | 0 | 410 | yes |
 | net-video-platform | internet | 111 | 1 | 0 | 110 | yes |
 | nature-plant | nature | 0 | 0 | 0 | 0 | not fetched |
@@ -189,7 +188,7 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | lit-playwright | literature | 776 | 0 | 1 | 775 | yes |
 | lit-fairy-tale | literature | 19 | 0 | 0 | 19 | no (too few) |
 | lit-comics | literature | 384 | 0 | 7 | 377 | yes |
-| gen-profession | general | 839 | 0 | 19 | 820 | yes |
+| gen-profession | general | 840 | 0 | 19 | 821 | yes |
 | gen-language | general | 777 | 0 | 3 | 774 | yes |
 | gen-currency | general | 311 | 0 | 0 | 311 | yes |
 | gen-holiday | general | 382 | 0 | 9 | 373 | yes |
@@ -199,9 +198,19 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | gen-museum | general | 227 | 0 | 0 | 227 | yes |
 | gen-university | general | 70 | 0 | 0 | 70 | yes |
 | gen-writing-system | general | 512 | 0 | 0 | 512 | yes |
-| gen-dance | general | 142 | 0 | 0 | 142 | yes |
+| gen-dance | general | 143 | 0 | 0 | 143 | yes |
 | gen-landmark | general | 102 | 1 | 1 | 100 | yes |
 | gen-brand | general | 60 | 0 | 0 | 60 | yes |
+| food-vegetable | food | 86 | 0 | 3 | 83 | yes |
+| food-sweets | food | 63 | 0 | 0 | 63 | yes |
+| gen-clothing | general | 55 | 0 | 0 | 55 | yes |
+| gen-furniture | general | 254 | 0 | 13 | 241 | yes |
+| gen-appliance | technology | 935 | 0 | 46 | 889 | yes |
+| transport-vehicle | transport | 21 | 0 | 0 | 21 | no (too few) |
+| gen-color | general | 136 | 0 | 4 | 132 | yes |
+| film-cartoon | movies | 450 | 0 | 2 | 448 | yes |
+| tv-cartoon-series | movies | 435 | 1 | 9 | 425 | yes |
+| gen-body | nature | 530 | 0 | 1 | 529 | yes |
 
 ## Templates (one question per parameter value)
 

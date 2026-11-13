@@ -60,6 +60,8 @@ function SettingsPanel({ isHost }: { isHost: boolean }) {
   return (
     <div className="card" style={{ display: "grid", gap: 18, width: "100%" }}>
       <Seg label={t(lang, "mode")} value={s.mode} disabled={!isHost} onChange={(v) => set({ mode: v })} options={[{ v: "classic", l: t(lang, "modeClassic") }, { v: "potato", l: t(lang, "modePotato") }]} />
+      <Seg label={t(lang, "difficulty")} value={s.difficulty ?? 1} disabled={!isHost} onChange={(v) => set({ difficulty: v })}
+        options={[{ v: 1 as const, l: t(lang, "diffEasy") }, { v: 2 as const, l: t(lang, "diffMedium") }, { v: 3 as const, l: t(lang, "diffAll") }]} />
       {s.mode === "classic" ? (<>
         <Seg label={t(lang, "rounds")} value={s.rounds} disabled={!isHost} onChange={(v) => set({ rounds: v })} options={[5, 10, 15, 20, 0].map((v) => ({ v: v as RoomSettings["rounds"], l: v ? String(v) : t(lang, "endless") }))} />
         <Seg label={t(lang, "timer")} value={s.timer} disabled={!isHost} onChange={(v) => set({ timer: v })} options={[10, 15, 20, 30, 45].map((v) => ({ v: v as RoomSettings["timer"], l: `${v} ${t(lang, "sec")}` }))} />

@@ -50,7 +50,7 @@ export class Room {
   code: string;
   players = new Map<string, Player>();
   phase: Phase = "lobby";
-  settings: RoomSettings = { mode: "classic", rounds: 10, timer: 20, categories: [], visibility: "hidden", earlyEnd: true, lives: 3 };
+  settings: RoomSettings = { mode: "classic", rounds: 10, timer: 20, categories: [], visibility: "hidden", earlyEnd: true, lives: 3, difficulty: 1 };
   round = 0;
   q: QuestionMeta | null = null;
   idx: QuestionIndex | null = null;
@@ -144,6 +144,7 @@ export class Room {
     if (Array.isArray(s.categories)) n.categories = s.categories.filter((c) => (CATEGORY_IDS as readonly string[]).includes(c));
     if (s.visibility === "live" || s.visibility === "hidden") n.visibility = s.visibility;
     if (typeof s.earlyEnd === "boolean") n.earlyEnd = s.earlyEnd;
+    if ([1, 2, 3].includes(s.difficulty as number)) n.difficulty = s.difficulty!;
     if (typeof s.lives === "number" && s.lives >= 1 && s.lives <= 5) n.lives = Math.floor(s.lives);
     this.settings = n;
     this.emit.state(this);
@@ -184,7 +185,7 @@ export class Room {
     const total = this.settings.rounds;
     if (total > 0 && this.round >= total) return this.finish();
     this.round++;
-    this.q = this.content.pickQuestion(this.settings.categories, this.used);
+    this.q = this.content.pickQuestion(this.settings.categories, this.used, 30, this.settings.difficulty);
     this.used.add(this.q.id);
     this.idx = this.content.index(this.q.id);
     for (const x of this.list) { x.answered = false; x.answerIdx = -1; x.typing = false; x.text = ""; }
@@ -340,7 +341,7 @@ export class Room {
       return;
     }
     this.round++;
-    const q = this.content.pickQuestion(this.settings.categories, this.used, 150);
+    const q = this.content.pickQuestion(this.settings.categories, this.used, 150, this.settings.difficulty);
     this.used.add(q.id);
     this.q = q; this.idx = this.content.index(q.id);
     const holder = prevHolder && !prevHolder.out ? prevHolder : alive[randomInt(alive.length)];
