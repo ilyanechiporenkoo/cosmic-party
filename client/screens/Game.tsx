@@ -95,7 +95,7 @@ function AnswerBox() {
   const { lang, room, me, typing, preview, submit } = useGame();
   const [text, setText] = useState("");
   const [pv, setPv] = useState<PreviewResult | null>(null);
-  const [status, setStatus] = useState<null | { kind: "notFound" | "rate" | "closed" | "ambiguous"; options?: { id: string; label: Loc }[] }>(null);
+  const [status, setStatus] = useState<null | { kind: "notFound" | "wrongLetter" | "rate" | "closed" | "ambiguous"; options?: { id: string; label: Loc }[] }>(null);
   const [accepted, setAccepted] = useState<Loc | null>(null);
   const [shake, setShake] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -125,7 +125,7 @@ function AnswerBox() {
     const r = await submit(text, choiceId);
     if (r.ok) { setAccepted(r.answer.label); setStatus(null); play("correct"); typing(""); return; }
     if (r.reason === "ambiguous") { setStatus({ kind: "ambiguous", options: r.options }); return; }
-    setStatus({ kind: r.reason === "rate" ? "rate" : r.reason === "closed" ? "closed" : "notFound" });
+    setStatus({ kind: r.reason === "rate" ? "rate" : r.reason === "closed" ? "closed" : r.reason === "wrongLetter" ? "wrongLetter" : "notFound" });
     setShake((s) => s + 1); play("error");
     inputRef.current?.focus(); // never lock or clear after an invalid attempt
   };
@@ -146,7 +146,7 @@ function AnswerBox() {
             </motion.div>
           ) : status ? (
             <motion.div key={"st" + shake} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ fontWeight: 700, color: "#fff" }} data-testid="not-found">
-              — {t(lang, status.kind === "rate" ? "tooFast" : status.kind === "closed" ? "closed" : "notFound")}
+              — {t(lang, status.kind === "rate" ? "tooFast" : status.kind === "closed" ? "closed" : status.kind === "wrongLetter" ? "wrongLetter" : "notFound")}
             </motion.div>
           ) : showPreview ? (
             <motion.div key="pv" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={{ fontWeight: 600 }} data-testid="preview">

@@ -10,6 +10,10 @@ import { fileURLToPath } from "node:url";
 const db = new DatabaseSync(fileURLToPath(new URL("../data/content.db", import.meta.url)), { readOnly: true });
 const errors: string[] = [];
 const q = db.prepare("SELECT * FROM questions").all() as any[];
+// same rule as the build and the server (SQLite's upper() is ASCII-only, so this is done in JS)
+const fold1 = (w: string) => w.toUpperCase().replace("Ё", "Е").replace("Є", "Е").replace("І", "И").replace("Ї", "И")[0];
+const initials = (label: string, person: boolean) => { const w = label.trim().split(/[\s-]+/).filter(Boolean); return person && w.length > 1 ? [fold1(w[0]), fold1(w[w.length - 1])] : [fold1(label.trim())]; };
+const startsWith = (a: { uk: string; ru: string }, L: string, person: boolean) => initials(a.ru, person).includes(L) || initials(a.uk, person).includes(L);
 
 const dupe = (sql: string, what: string) => { for (const r of db.prepare(sql).all() as any[]) errors.push(`${what}: ${JSON.stringify(r)}`); };
 dupe("SELECT id, COUNT(*) n FROM questions GROUP BY id HAVING n > 1", "duplicate question id");
@@ -22,7 +26,10 @@ dupe("SELECT question_id, answer_id FROM answers WHERE answer_id NOT GLOB 'Q[0-9
 dupe("SELECT question_id, answer_id, label_uk FROM answers WHERE label_uk GLOB '*[ыэъёЫЭЪЁ]*'", "ru-only letters in uk label");
 dupe("SELECT question_id, answer_id, label_ru FROM answers WHERE label_ru GLOB '*[іїєґІЇЄҐ]*'", "uk-only letters in ru label");
 for (const row of q) {
-  const n = (db.prepare("SELECT COUNT(*) n FROM answers WHERE question_id = ?").get(row.id) as any).n;
+  const n = row.base
+    ? (db.prepare("SELECT label_uk, label_ru FROM answers WHERE question_id = ?").all(row.base) as any[]).filter((a) => startsWith({ uk: a.label_uk, ru: a.label_ru }, row.letter, !!row.person)).length
+    : (db.prepare("SELECT COUNT(*) n FROM answers WHERE question_id = ?").get(row.id) as any).n;
+  if (row.base && !q.some((b) => b.id === row.base)) errors.push(`letter question ${row.id} has no base`);
   if (n !== row.answer_count) errors.push(`count mismatch ${row.id}: declared ${row.answer_count}, rows ${n}`);
   if (!row.text_uk || !row.text_ru) errors.push(`missing question text ${row.id}`);
 }

@@ -318,8 +318,16 @@ export class Room {
       if (i !== undefined) return { ok: true, i };
       return { ok: false, reason: "ambiguous", options: m.ids.map((k) => ({ id: idx.answers[k].id, label: idx.answers[k].label })) };
     }
-    if (m.status !== "match") return { ok: false, reason: "notFound" };
+    if (m.status !== "match") return { ok: false, reason: this.wrongLetter(idx, text) ? "wrongLetter" : "notFound" };
     return { ok: true, i: m.ids[0] };
+  }
+
+  /** letter question: the text is a valid answer to the base question, just not on this letter */
+  private wrongLetter(idx: QuestionIndex, text: string): boolean {
+    const base = idx.meta.base;
+    if (!base || !this.content.meta(base)) return false;
+    const m = matchAnswer(this.content.index(base), text);
+    return m.status === "match" || m.status === "ambiguous";
   }
 
   // ── hot potato ────────────────────────────────────────────

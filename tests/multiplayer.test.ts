@@ -53,7 +53,9 @@ describe("two real players", () => {
     // invalid answers never lock: several in a row, then valid
     for (const bad of ["абракадабра", "zzzzzz", "coffee"]) {
       const r = await call(a, "game:submit", { text: bad });
-      expect(r).toEqual({ ok: false, reason: "notFound" });
+      // on a letter question ("… на букву «К»") "coffee" is CoffeeScript on the wrong letter — still rejected, still unlocked
+      expect(r.ok).toBe(false);
+      expect(["notFound", "wrongLetter"]).toContain(r.reason);
     }
     const prev = await call(a, "game:preview", { text: common.ru.toLowerCase() + "  " });
     expect(prev.status).toBe("match");
@@ -144,4 +146,35 @@ describe("hot potato", () => {
     delete process.env.CP_TEST_FUSE_MS;
     a.close(); b.close();
   }, 20000);
+});
+
+describe("letter questions in a real room", () => {
+  it("easy rooms draw only easy questions, and a valid answer on the wrong letter gets its own hint", async () => {
+    const a = await connect(), b = await connect();
+    const created = await call(a, "room:create", { name: "Аня", avatar: "moon", token: tok("la") });
+    await call(b, "room:join", { code: created.code, name: "Борис", avatar: "robot", token: tok("lb") });
+    await call(a, "room:settings", { difficulty: 1, timer: 45, rounds: 5 });
+    await call(b, "player:ready", { ready: true });
+    let letterQ: RoomSnapshot["question"] | null = null;
+    for (let attempt = 0; attempt < 25 && !letterQ; attempt++) {
+      const q = until<RoomSnapshot>(a, "room:state", (s) => s.phase === "question");
+      await call(a, "game:start");
+      const s = await q;
+      const meta = srv.content.meta(s.question!.id)!;
+      expect(meta.difficulty).toBe(1);
+      if (meta.kind === "letter") { letterQ = s.question; break; }
+      await call(a, "game:finish");
+      await call(a, "game:lobby");
+      await call(b, "player:ready", { ready: true });
+    }
+    expect(letterQ).toBeTruthy();
+    const meta = srv.content.meta(letterQ!.id)!;
+    // a real answer of the base question that does not start with this letter
+    const onLetter = new Set(srv.content.index(letterQ!.id).answers.map((x) => x.id));
+    const off = srv.content.index(meta.base!).answers.find((x) => !onLetter.has(x.id) && !/\d/.test(x.label.ru))!;
+    expect(await call(a, "game:submit", { text: off.label.ru })).toMatchObject({ ok: false, reason: "wrongLetter" });
+    const on = srv.content.index(letterQ!.id).answers[0];
+    expect((await call(a, "game:submit", { text: on.label.ru })).ok).toBe(true);
+    a.close(); b.close();
+  }, 60_000);
 });

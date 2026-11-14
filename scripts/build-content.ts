@@ -24,7 +24,7 @@ if (existsSync(dbFile)) rmSync(dbFile);
 const db = new DatabaseSync(fileURLToPath(dbFile));
 db.exec(`
 CREATE TABLE questions (id TEXT PRIMARY KEY, category TEXT, difficulty INT, text_uk TEXT, text_ru TEXT, filler TEXT,
-  answer_count INT, source TEXT, query TEXT, fetched_at TEXT, verification TEXT, kind TEXT, template TEXT);
+  answer_count INT, source TEXT, query TEXT, fetched_at TEXT, verification TEXT, kind TEXT, template TEXT, base TEXT, letter TEXT, person INT);
 CREATE TABLE answers (question_id TEXT, answer_id TEXT, rank INT, sitelinks INT, label_uk TEXT, label_ru TEXT,
   aliases TEXT, merged TEXT, PRIMARY KEY (question_id, answer_id));
 CREATE INDEX answers_q ON answers(question_id);
@@ -38,7 +38,7 @@ const isJunk = (s: string) => !s || /^Q\d+$/.test(s) || s.length > 70;
 
 interface Built { qid: string; sitelinks: number; uk: string; ru: string; aliases: Set<string>; merged: string[] }
 
-const insQ = db.prepare(`INSERT INTO questions VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+const insQ = db.prepare(`INSERT INTO questions VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
 const insA = db.prepare(`INSERT INTO answers VALUES (?,?,?,?,?,?,?,?)`);
 const report: { id: string; category: string; raw: number; locRejected: number; merged: number; answers: number; included: boolean; missing?: boolean; template?: string }[] = [];
 
@@ -60,9 +60,29 @@ for (const t of TEMPLATE_DEFS) {
     try { sh = JSON.parse(readFileSync(new URL(name, dir), "utf8")); } catch { continue; }
     if (textsSeen.has(sh.text.uk) || textsSeen.has(sh.text.ru)) continue; // question text must stay unique
     textsSeen.add(sh.text.uk); textsSeen.add(sh.text.ru);
-    sources.push({ id: sh.id, category: sh.category, difficulty: sh.difficulty, uk: sh.text.uk, ru: sh.text.ru, person: sh.person, filler: sh.filler,
+    sources.push({ id: sh.id, category: sh.category, difficulty: t.difficulty, /* current template setting, not the one at fetch time */ uk: sh.text.uk, ru: sh.text.ru, person: sh.person, filler: sh.filler,
       min: MIN_TEMPLATE_ANSWERS, kind: "template", template: t.id, shard: sh.skipped ? { ...sh, items: [] } : sh });
   }
+}
+
+// ── letter questions: "Назовите птицу на букву «К»" — a subset of a broad question's verified answers ──
+export const LETTERS = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЮЯ".split("");
+export const MIN_LETTER_ANSWERS = 15;
+const fold1 = (w: string) => w.toUpperCase().replace("Ё", "Е").replace("Є", "Е").replace("І", "И").replace("Ї", "И")[0];
+const initials = (label: string, person: boolean) => { const w = label.trim().split(/[\s-]+/).filter(Boolean); return person && w.length > 1 ? [fold1(w[0]), fold1(w[w.length - 1])] : [fold1(label.trim())]; };
+const startsWith = (a: { uk: string; ru: string }, L: string, person: boolean) => initials(a.ru, person).includes(L) || initials(a.uk, person).includes(L);
+const letterReport: { base: string; letters: number; questions: number }[] = [];
+function addLetterQuestions(def: Source, built: Built[], fillerSet: string[], shard: RawShard) {
+  const baseUk = def.uk.replace(/\s*\([^)]*\)\s*$/, ""), baseRu = def.ru.replace(/\s*\([^)]*\)\s*$/, "");
+  let made = 0;
+  for (const L of LETTERS) {
+    const n = built.filter((b) => startsWith(b, L, !!def.person)).length;
+    if (n < MIN_LETTER_ANSWERS) continue;
+    insQ.run(`${def.id}~${L}`, def.category, def.difficulty, def.person ? `${baseUk} — ім'я чи прізвище на «${L}»` : `${baseUk} на літеру «${L}»`, def.person ? `${baseRu} — имя или фамилия на «${L}»` : `${baseRu} на букву «${L}»`, JSON.stringify(fillerSet), n,
+      shard.source, shard.query, shard.fetchedAt, JSON.stringify({ subsetOf: def.id, letter: L }), "letter", `letter:${def.id}`, def.id, L, def.person ? 1 : 0);
+    made++;
+  }
+  letterReport.push({ base: def.id, letters: LETTERS.length, questions: made });
 }
 
 db.exec("BEGIN");
@@ -103,7 +123,8 @@ for (const def of sources) {
   const fillerSet = [...new Set((def.filler ?? []).map(key))];
   insQ.run(def.id, def.category, def.difficulty, def.uk, def.ru, JSON.stringify(fillerSet), built.length, shard.source, shard.query, shard.fetchedAt,
     JSON.stringify({ builtAt: new Date().toISOString(), rawItems: items.length, locRejected, merged: mergedCount, checks: ["uk+ru labels present", "script check", "dedup by label"] }),
-    def.kind, def.template ?? null);
+    def.kind, def.template ?? null, null, null, def.person ? 1 : 0);
+  if (def.kind === "broad") addLetterQuestions(def, built, fillerSet, shard);
   built.forEach((b, i) => {
     const aliases = [...new Set([...b.aliases].map((a) => a.trim()))].filter((a) => a.length >= 1);
     insA.run(def.id, b.qid, i + 1, b.sitelinks, b.uk, b.ru, JSON.stringify(aliases), JSON.stringify(b.merged));
@@ -113,6 +134,7 @@ db.exec("COMMIT");
 
 // ── coverage report ─────────────────────────────────────────
 const inc = report.filter((r) => r.included);
+const letterTotal = letterReport.reduce((a, r) => a + r.questions, 0);
 const total = inc.reduce((s, r) => s + r.answers, 0);
 const ge1000 = inc.filter((r) => r.answers >= 1000).length;
 const byCat = new Map<string, { q: number; a: number }>();
@@ -124,6 +146,7 @@ const lines = [
   "",
   `- Broad question definitions: **${QUESTION_DEFS.length}**, templates: **${TEMPLATE_DEFS.length}**`,
   `- Questions included: **${inc.length}** (broad: ${inc.filter((r) => !r.template).length} with ≥${MIN_ANSWERS} answers; templated: ${inc.filter((r) => r.template).length} with ≥${MIN_TEMPLATE_ANSWERS} answers)`,
+  `- Letter questions ("… на букву «К»", subsets of broad questions with ≥${MIN_LETTER_ANSWERS} answers): **${letterTotal}**`,
   `- Question→answer relations: **${total.toLocaleString("en")}**`,
   `- Questions with ≥1000 answers: **${ge1000}**`,
   `- Target: 10,000 questions × 1000 answers. Current coverage: ${(inc.length / 100).toFixed(2)}% of question target, ${(total / 100000).toFixed(3)}% of relation target.`,
@@ -141,5 +164,7 @@ for (const t of TEMPLATE_DEFS) {
   const inc2 = rs.filter((r) => r.included);
   lines.push(`| ${t.id} | ${rs.length} | ${inc2.length} | ${inc2.reduce((a, r) => a + r.answers, 0)} |`);
 }
+lines.push("", "## Letter questions", "", "| Base question | Letter questions |", "|---|---:|", ...letterReport.filter((r) => r.questions).map((r) => `| ${r.base} | ${r.questions} |`));
 writeFileSync(new URL("../content/COVERAGE.md", import.meta.url), lines.join("\n"));
+console.log(`letter questions: ${letterTotal}`);
 console.log(`included ${inc.length}/${report.length} candidate questions (${inc.filter((r) => r.template).length} templated), ${total} relations, ${ge1000} with ≥1000 answers`);

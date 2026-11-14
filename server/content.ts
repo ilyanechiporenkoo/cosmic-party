@@ -6,7 +6,7 @@ import type { CategoryId, Loc, MatchKind, PreviewResult, QuestionPublic } from "
 import { normalize, foldCyr, cyrToLat, phoneticKey, stem, editDistance, typoBudget, GENERIC_FILLER } from "./text.ts";
 
 export interface Answer { id: string; label: Loc; rank: number; sitelinks: number }
-export interface QuestionMeta { id: string; category: CategoryId; difficulty: number; text: Loc; answerCount: number; filler: string[]; kind: "broad" | "template"; template: string | null }
+export interface QuestionMeta { id: string; category: CategoryId; difficulty: number; text: Loc; answerCount: number; filler: string[]; kind: "broad" | "template" | "letter"; template: string | null; base?: string | null; letter?: string | null; person?: boolean }
 
 type IdxMap = Map<string, Set<number>>;
 export interface QuestionIndex {
@@ -138,6 +138,11 @@ export function toPreview(idx: QuestionIndex, input: string, m: MatchOutcome): P
   return { status: m.status, input };
 }
 
+// letter questions: an answer qualifies by its uk or ru name; a person by first name or surname
+const fold1 = (w: string) => w.toUpperCase().replace("Ё", "Е").replace("Є", "Е").replace("І", "И").replace("Ї", "И")[0];
+const initials = (label: string, person: boolean) => { const w = label.trim().split(/[\s-]+/).filter(Boolean); return person && w.length > 1 ? [fold1(w[0]), fold1(w[w.length - 1])] : [fold1(label.trim())]; };
+const startsWith = (a: { uk: string; ru: string }, L: string, person: boolean) => initials(a.ru, person).includes(L) || initials(a.uk, person).includes(L);
+
 // ── store ────────────────────────────────────────────────────
 export class ContentStore {
   private db: DatabaseSync;
@@ -148,7 +153,7 @@ export class ContentStore {
     this.db = new DatabaseSync(file, { readOnly: true });
     this.questions = (this.db.prepare("SELECT * FROM questions").all() as any[]).map((r) => ({
       id: r.id, category: r.category, difficulty: r.difficulty, text: { uk: r.text_uk, ru: r.text_ru }, answerCount: r.answer_count, filler: JSON.parse(r.filler),
-      kind: r.kind ?? "broad", template: r.template ?? null,
+      kind: r.kind ?? "broad", template: r.template ?? null, base: r.base ?? null, letter: r.letter ?? null, person: !!r.person,
     }));
   }
   meta(id: string) { return this.questions.find((q) => q.id === id); }
@@ -157,8 +162,11 @@ export class ContentStore {
     if (hit) { this.cache.delete(id); this.cache.set(id, hit); return hit; }
     const meta = this.meta(id);
     if (!meta) throw new Error("unknown question " + id);
-    const rows = (this.db.prepare("SELECT * FROM answers WHERE question_id = ? ORDER BY rank").all(id) as any[]).map((r) => ({
-      answer: { id: r.answer_id, label: { uk: r.label_uk, ru: r.label_ru }, rank: r.rank, sitelinks: r.sitelinks },
+    // letter questions: the base question's answers whose uk or ru name starts with the letter, re-ranked within the subset
+    const raw = (this.db.prepare("SELECT * FROM answers WHERE question_id = ? ORDER BY rank").all(meta.base ?? id) as any[])
+      .filter((r) => !meta.letter || startsWith({ uk: r.label_uk, ru: r.label_ru }, meta.letter, !!meta.person));
+    const rows = raw.map((r, i) => ({
+      answer: { id: r.answer_id, label: { uk: r.label_uk, ru: r.label_ru }, rank: meta.letter ? i + 1 : r.rank, sitelinks: r.sitelinks },
       aliases: JSON.parse(r.aliases) as string[],
     }));
     const idx = buildIndex(meta, rows);
@@ -179,7 +187,8 @@ export class ContentStore {
     // Each template family shares its weight so 150 "<country>: footballer" questions don't crowd out the rest.
     const famSize = new Map<string, number>();
     for (const q of from) if (q.template) famSize.set(q.template, (famSize.get(q.template) ?? 0) + 1);
-    const w = from.map((q) => (q.kind === "broad" ? 4 : 2 / Math.sqrt(famSize.get(q.template!) ?? 1)) * Math.sqrt(Math.min(q.answerCount, 400) / 100));
+    // letter families get a bigger share than other templates: they are the bulk of the easy pool
+    const w = from.map((q) => (q.kind === "broad" ? 4 : (q.kind === "letter" ? 3 : 2) / Math.sqrt(famSize.get(q.template!) ?? 1)) * Math.sqrt(Math.min(q.answerCount, 400) / 100));
     let r = Math.random() * w.reduce((a, b) => a + b, 0);
     for (let i = 0; i < from.length; i++) { r -= w[i]; if (r <= 0) return from[i]; }
     return from[from.length - 1];

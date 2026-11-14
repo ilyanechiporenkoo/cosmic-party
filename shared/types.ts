@@ -123,7 +123,7 @@ export interface PreviewResult {
 
 export type SubmitResult =
   | { ok: true; answer: { id: string; label: Loc } }
-  | { ok: false; reason: "notFound" | "ambiguous" | "already" | "closed" | "used" | "rate" | "notYourTurn"; options?: { id: string; label: Loc }[] };
+  | { ok: false; reason: "notFound" | "wrongLetter" | "ambiguous" | "already" | "closed" | "used" | "rate" | "notYourTurn"; options?: { id: string; label: Loc }[] };
 
 export const ERROR_CODES = ["roomNotFound", "roomFull", "badName", "notHost", "notEnoughPlayers", "notReady", "inProgress", "rate"] as const;
 export type ErrorCode = (typeof ERROR_CODES)[number];

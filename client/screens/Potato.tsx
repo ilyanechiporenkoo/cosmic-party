@@ -105,7 +105,7 @@ function PotatoInput({ active, sequence, holderKey }: { active: boolean; sequenc
     const r = await submit(text, choiceId);
     if (r.ok) { play("correct"); return; }
     if (r.reason === "ambiguous") { setOpts(r.options ?? null); return; }
-    setMsg(t(lang, r.reason === "used" ? "used" : r.reason === "notYourTurn" ? "notYourTurn" : r.reason === "rate" ? "tooFast" : "notFound"));
+    setMsg(t(lang, r.reason === "used" ? "used" : r.reason === "notYourTurn" ? "notYourTurn" : r.reason === "rate" ? "tooFast" : r.reason === "wrongLetter" ? "wrongLetter" : "notFound"));
     play("error"); ref.current?.focus();
   };
   return (

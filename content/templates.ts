@@ -37,7 +37,7 @@ const BANDS = "VALUES ?bc { wd:Q215380 wd:Q5741069 wd:Q9212979 } ?item wdt:P31 ?
 
 export const TEMPLATE_DEFS: TemplateDef[] = [
   // ── by country ───────────────────────────────────────────
-  { id: "c-city", category: "countries", difficulty: 2, params: { kind: "country" }, minSitelinks: 4,
+  { id: "c-city", category: "countries", difficulty: 1, params: { kind: "country" }, minSitelinks: 4,
     where: (p) => `?item wdt:P17 ${p} ; wdt:P31/wdt:P279* wd:Q515 .`, text: country("назвіть місто", "назовите город"), filler: ["місто", "город"] },
   { id: "c-river", category: "geography", difficulty: 2, params: { kind: "country" }, minSitelinks: 2,
     where: (p) => `?item wdt:P31 wd:Q4022 ; wdt:P17 ${p} .`, text: country("назвіть річку", "назовите реку"), filler: ["річка", "река"] },
@@ -131,7 +131,7 @@ export const TEMPLATE_DEFS: TemplateDef[] = [
     where: (p) => `?item wdt:P19 ${p} ; wdt:P31 wd:Q5 .`, text: (l) => ({ uk: `Назвіть відому людину, яка народилася в місті ${l.uk}`, ru: `Назовите знаменитость, родившуюся в городе ${l.ru}` }) },
   { id: "q-alumni", category: "general", difficulty: 3, params: { kind: "query", top: 30 }, minSitelinks: 40, person: true,
     where: (p) => `?item wdt:P69 ${p} ; wdt:P31 wd:Q5 .`, text: (l) => ({ uk: `Назвіть відомого випускника — ${l.uk}`, ru: `Назовите известного выпускника — ${l.ru}` }) },
-  { id: "q-universe", category: "movies", difficulty: 2, params: { kind: "query", top: 40 }, minSitelinks: 3,
+  { id: "q-universe", category: "movies", difficulty: 1, params: { kind: "query", top: 40 }, minSitelinks: 3,
     where: (p) => `?item wdt:P1080 ${p} .`, text: (l) => ({ uk: `Назвіть персонажа: ${l.uk}`, ru: `Назовите персонажа: ${l.ru}` }), filler: ["персонаж"] },
   { id: "q-collection", category: "general", difficulty: 3, params: { kind: "query", top: 20 }, minSitelinks: 8,
     where: (p) => `?item wdt:P31 wd:Q3305213 ; wdt:P195 ${p} .`, text: (l) => ({ uk: `Назвіть картину з колекції: ${l.uk}`, ru: `Назовите картину из коллекции: ${l.ru}` }), filler: ["картина"] },

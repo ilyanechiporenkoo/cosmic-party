@@ -1,9 +1,10 @@
 # Content coverage (measured)
 
-Generated: 2026-11-13T22:22:20.698Z
+Generated: 2026-11-14T21:59:14.668Z
 
 - Broad question definitions: **172**, templates: **46**
 - Questions included: **1676** (broad: 153 with ≥30 answers; templated: 1523 with ≥40 answers)
+- Letter questions ("… на букву «К»", subsets of broad questions with ≥15 answers): **1655**
 - Question→answer relations: **402,576**
 - Questions with ≥1000 answers: **36**
 - Target: 10,000 questions × 1000 answers. Current coverage: 16.76% of question target, 4.026% of relation target.
@@ -262,3 +263,126 @@ Every answer is a Wikidata item with both a Ukrainian and a Russian label. Nothi
 | q-alumni | 0 | 0 | 0 |
 | q-universe | 22 | 14 | 1671 |
 | q-collection | 11 | 2 | 99 |
+
+## Letter questions
+
+| Base question | Letter questions |
+|---|---:|
+| animal-mammal | 25 |
+| animal-bird | 25 |
+| animal-reptile | 26 |
+| animal-fish | 22 |
+| animal-amphibian | 17 |
+| animal-arachnid | 2 |
+| animal-butterfly | 16 |
+| animal-dinosaur | 24 |
+| animal-dog-breed | 5 |
+| geo-river | 25 |
+| geo-lake | 20 |
+| geo-mountain | 22 |
+| geo-island | 22 |
+| geo-sea | 1 |
+| geo-volcano | 10 |
+| geo-mountain-range | 19 |
+| geo-peninsula | 6 |
+| geo-waterfall | 3 |
+| geo-cave | 6 |
+| geo-national-park | 13 |
+| country-any | 4 |
+| country-historical | 23 |
+| city-big | 24 |
+| city-capital | 6 |
+| city-usa | 22 |
+| city-germany | 20 |
+| city-italy | 19 |
+| city-poland | 23 |
+| city-japan | 13 |
+| city-spain | 20 |
+| geo-airport | 14 |
+| hist-battle | 9 |
+| hist-war | 12 |
+| hist-greek-deity | 5 |
+| hist-roman-emperor | 3 |
+| hist-castle | 11 |
+| hist-archaeological | 20 |
+| hist-revolution | 7 |
+| hist-monarch | 21 |
+| sci-mineral | 14 |
+| sci-disease | 9 |
+| sci-physicist | 23 |
+| sci-mathematician | 22 |
+| sci-chemist | 21 |
+| sci-inventor | 22 |
+| sci-unit | 19 |
+| sci-biologist | 15 |
+| sci-philosopher | 25 |
+| tech-website | 7 |
+| game-character | 7 |
+| film-any | 25 |
+| tv-series | 24 |
+| tv-anime | 5 |
+| film-actor | 22 |
+| film-director | 23 |
+| film-character | 22 |
+| music-instrument | 13 |
+| music-genre | 17 |
+| music-singer | 21 |
+| music-composer | 23 |
+| music-rapper | 13 |
+| food-dish | 24 |
+| food-cheese | 10 |
+| food-cocktail | 1 |
+| food-dessert | 8 |
+| food-bread | 4 |
+| food-drink | 14 |
+| sport-any | 11 |
+| sport-club | 22 |
+| sport-footballer | 26 |
+| sport-tennis | 21 |
+| sport-basketball | 19 |
+| sport-chess | 18 |
+| sport-racer | 19 |
+| sport-boxer | 19 |
+| sport-stadium | 11 |
+| astro-moon | 5 |
+| astro-nebula | 1 |
+| astro-comet | 1 |
+| astro-astronomer | 21 |
+| space-probe | 1 |
+| space-astronaut | 22 |
+| space-mission | 2 |
+| space-station | 1 |
+| car-model | 1 |
+| transport-airline | 1 |
+| transport-aircraft | 4 |
+| transport-ship | 8 |
+| transport-metro | 8 |
+| net-youtuber | 16 |
+| nature-flower | 17 |
+| nature-weather | 24 |
+| lit-writer | 26 |
+| lit-poet | 26 |
+| lit-novel | 20 |
+| lit-work | 19 |
+| lit-character | 16 |
+| lit-playwright | 22 |
+| lit-comics | 11 |
+| gen-profession | 20 |
+| gen-language | 20 |
+| gen-currency | 10 |
+| gen-holiday | 7 |
+| gen-painter | 20 |
+| gen-painting | 6 |
+| gen-creature | 16 |
+| gen-museum | 7 |
+| gen-university | 1 |
+| gen-writing-system | 9 |
+| gen-dance | 2 |
+| gen-landmark | 2 |
+| food-vegetable | 1 |
+| gen-furniture | 5 |
+| gen-appliance | 4 |
+| gen-color | 3 |
+| film-cartoon | 14 |
+| tv-cartoon-series | 15 |
+| gen-body | 16 |

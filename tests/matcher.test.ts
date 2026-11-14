@@ -74,3 +74,28 @@ describe("question difficulty", () => {
     if (hardOnly) expect(store.pickQuestion([hardOnly], new Set(), 30, 1).category).toBe(hardOnly);
   });
 });
+
+describe("letter questions", () => {
+  const store = new ContentStore();
+  const letterQs = store.questions.filter((q) => q.kind === "letter");
+  it("exist and point at a real base question", () => {
+    expect(letterQs.length).toBeGreaterThan(500);
+    for (const q of letterQs.slice(0, 50)) expect(store.meta(q.base!)).toBeTruthy();
+  });
+  it("every answer starts with the letter (by uk or ru name; people by first name or surname)", () => {
+    for (const q of letterQs.filter((_, i) => i % 40 === 0)) {
+      const idx = store.index(q.id);
+      expect(idx.answers.length).toBe(q.answerCount);
+      for (const a of idx.answers) {
+        const words = (s: string) => s.trim().split(/[\s-]+/).filter(Boolean);
+        const ini = (s: string) => { const w = words(s); return (q.person && w.length > 1 ? [w[0], w[w.length - 1]] : [s.trim()]).map((x) => x.toUpperCase().replace("Ё", "Е").replace("Є", "Е").replace("І", "И").replace("Ї", "И")[0]); };
+        expect([...ini(a.label.ru), ...ini(a.label.uk)]).toContain(q.letter);
+      }
+    }
+  });
+  it("accepts an answer on the letter and rejects one on another letter", () => {
+    const idx = store.index("city-big~М");
+    expect(matchAnswer(idx, "москва").status).toBe("match");
+    expect(matchAnswer(idx, "лондон").status).toBe("none");
+  });
+});
